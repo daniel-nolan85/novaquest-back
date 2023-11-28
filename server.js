@@ -11,7 +11,7 @@ const port = process.env.PORT || 8000;
 mongoose
   .connect(process.env.DATABASE, {})
   .then(() => console.log(`DB Connected`))
-  .catch((err) => console.log(`DB Connection Error ${err}`));
+  .catch((err) => console.error(`DB Connection Error ${err}`));
 
 app.use(morgan('dev'));
 app.use(express.json({ limit: '2mb' }));

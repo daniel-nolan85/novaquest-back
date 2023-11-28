@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: { type: String, required: true, index: true },
     role: { type: String, default: 'subscriber' },
+    textSpeed: { type: Number, default: 50 },
   },
   { timestamps: true }
 );
