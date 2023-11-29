@@ -1,5 +1,43 @@
 const User = require('../models/user');
 
+exports.updateUserName = async (req, res) => {
+  const { _id, name } = req.body;
+
+  if (!_id || !name) {
+    return res
+      .status(400)
+      .json({ error: 'Invalid request. Missing required parameters.' });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $set: { name } },
+      { new: true }
+    );
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateWelcomeComplete = async (req, res) => {
+  const { _id } = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $set: { hasCompletedWelcome: true } },
+      { new: true }
+    );
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.updateTextSpeed = async (req, res) => {
   let { _id, textSpeed } = req.body;
 
