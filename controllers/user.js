@@ -22,13 +22,13 @@ exports.updateUserName = async (req, res) => {
   }
 };
 
-exports.updateWelcomeComplete = async (req, res) => {
-  const { _id } = req.body;
+exports.badgeUnlocked = async (req, res) => {
+  const { _id, badge } = req.body;
 
   try {
     const user = await User.findOneAndUpdate(
       { _id },
-      { $set: { hasCompletedWelcome: true } },
+      { $set: { [badge]: true } },
       { new: true }
     );
     res.json(user);

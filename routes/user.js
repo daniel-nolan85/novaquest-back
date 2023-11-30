@@ -6,12 +6,12 @@ const { authCheck } = require('../middleware/auth');
 
 const {
   updateUserName,
-  updateWelcomeComplete,
+  badgeUnlocked,
   updateTextSpeed,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
-router.put('/update-welcome-complete', authCheck, updateWelcomeComplete);
+router.put('/badge-unlocked', authCheck, badgeUnlocked);
 router.put('/update-text-speed', authCheck, updateTextSpeed);
 
 module.exports = router;
