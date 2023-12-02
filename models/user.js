@@ -6,8 +6,15 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: { type: String, required: true, index: true },
     role: { type: String, default: 'subscriber' },
-    achievedCosmicPioneer: { type: Boolean, default: false },
     textSpeed: { type: Number, default: 50 },
+    viewedRovers: [{ type: String }],
+    viewedRoverCameras: [{ type: String }],
+    viewedRoverDateTypes: [{ type: String }],
+    achievedCosmicPioneer: { type: Boolean, default: false },
+    achievedRedPlanetVoyager: { type: Boolean, default: false },
+    achievedMarsRoverMaestro: { type: Boolean, default: false },
+    achievedMartianLensMaster: { type: Boolean, default: false },
+    achievedCosmicChronologist: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
