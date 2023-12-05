@@ -15,6 +15,15 @@ const userSchema = new mongoose.Schema(
     achievedMarsRoverMaestro: { type: Boolean, default: false },
     achievedMartianLensMaster: { type: Boolean, default: false },
     achievedCosmicChronologist: { type: Boolean, default: false },
+    achievedCosmicCadet: { type: Boolean, default: false },
+    achievedStarNavigator: { type: Boolean, default: false },
+    achievedGalacticSage: { type: Boolean, default: false },
+    achievedNovaScholar: { type: Boolean, default: false },
+    achievedQuasarVirtuoso: { type: Boolean, default: false },
+    achievedSupernovaSavant: { type: Boolean, default: false },
+    achievedLightSpeedExplorer: { type: Boolean, default: false },
+    achievedOdysseyTrailblazer: { type: Boolean, default: false },
+    achievedInfinityVoyager: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
