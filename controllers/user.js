@@ -24,7 +24,7 @@ exports.updateUserName = async (req, res) => {
 
 exports.badgeUnlocked = async (req, res) => {
   const { _id, badge } = req.body;
-
+  console.log('badge => ', badge);
   try {
     const user = await User.findOneAndUpdate(
       { _id },
