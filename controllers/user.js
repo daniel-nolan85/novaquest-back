@@ -22,9 +22,23 @@ exports.updateUserName = async (req, res) => {
   }
 };
 
+exports.awardXP = async (req, res) => {
+  const { _id, xp } = req.body;
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $inc: { xp } },
+      { new: true }
+    ).select('xp rank');
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.badgeUnlocked = async (req, res) => {
   const { _id, badge } = req.body;
-  console.log('badge => ', badge);
   try {
     const user = await User.findOneAndUpdate(
       { _id },
