@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, index: true },
     role: { type: String, default: 'subscriber' },
     xp: { type: Number, default: 0 },
-    rank: { type: String, default: 'Novice' },
+    rank: { type: String, default: 'Space Explorer' },
     lastLoginDate: String,
     daysInSpace: Number,
     textSpeed: { type: Number, default: 50 },

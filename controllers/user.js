@@ -52,6 +52,11 @@ exports.badgeUnlocked = async (req, res) => {
   }
 };
 
+exports.promoteUser = async (req, res) => {
+  const { _id, rank } = req.body;
+  console.log('promoteUser => ', _id, rank);
+};
+
 exports.updateTextSpeed = async (req, res) => {
   let { _id, textSpeed } = req.body;
 
