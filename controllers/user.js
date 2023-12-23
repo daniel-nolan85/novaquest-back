@@ -52,9 +52,21 @@ exports.badgeUnlocked = async (req, res) => {
   }
 };
 
+// this function has not yet been tested!!
 exports.promoteUser = async (req, res) => {
   const { _id, rank } = req.body;
   console.log('promoteUser => ', _id, rank);
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $set: { rank } },
+      { new: true }
+    ).select('rank');
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 exports.updateTextSpeed = async (req, res) => {
