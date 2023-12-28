@@ -12,6 +12,11 @@ const {
   updateTextSpeed,
   updateViewedRovers,
   checkTriviaAchievements,
+  fetchThisUser,
+  followMember,
+  unfollowMember,
+  getAllies,
+  getExplorers,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -21,5 +26,10 @@ router.put('/promote-user', authCheck, promoteUser);
 router.put('/update-text-speed', authCheck, updateTextSpeed);
 router.put('/update-viewed-rovers', authCheck, updateViewedRovers);
 router.put('/check-trivia-achievements', authCheck, checkTriviaAchievements);
+router.post('/fetch-this-user', authCheck, fetchThisUser);
+router.put('/follow-member', authCheck, followMember);
+router.put('/unfollow-member', authCheck, unfollowMember);
+router.post('/fetch-allies', authCheck, getAllies);
+router.post('/fetch-explorers', authCheck, getExplorers);
 
 module.exports = router;

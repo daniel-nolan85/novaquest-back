@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
     rank: { type: String, default: 'Space Explorer' },
     lastLoginDate: String,
     daysInSpace: Number,
+    allies: [{ type: ObjectId, ref: 'User' }],
+    explorers: [{ type: ObjectId, ref: 'User' }],
     textSpeed: { type: Number, default: 50 },
     viewedRovers: [{ type: String }],
     viewedRoverCameras: [{ type: String }],

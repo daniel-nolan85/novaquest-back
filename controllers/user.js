@@ -247,3 +247,98 @@ exports.checkTriviaAchievements = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.fetchThisUser = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const user = await User.findById(userId).select(
+      'profileImage name rank bio'
+    );
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.followMember = async (req, res) => {
+  const { _id, userId } = req.body;
+  try {
+    const currentUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: {
+          allies: userId,
+        },
+      },
+      { new: true }
+    ).select('allies');
+    const otherUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: {
+          explorers: _id,
+        },
+      },
+      { new: true }
+    );
+    res.json(currentUser);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.unfollowMember = async (req, res) => {
+  const { _id, userId } = req.body;
+  try {
+    const currentUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        $pull: {
+          allies: userId,
+        },
+      },
+      { new: true }
+    ).select('allies');
+    const otherUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: {
+          explorers: _id,
+        },
+      },
+      { new: true }
+    );
+    res.json(currentUser);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getAllies = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const user = await User.findById(userId)
+      .select('allies')
+      .populate('allies', '_id profileImage name rank');
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.getExplorers = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const user = await User.findById(userId)
+      .select('explorers')
+      .populate('explorers', '_id profileImage name rank');
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
