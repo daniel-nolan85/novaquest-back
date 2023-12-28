@@ -17,6 +17,8 @@ const {
   unfollowMember,
   getAllies,
   getExplorers,
+  updateProfileWithImage,
+  updateProfile,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -31,5 +33,7 @@ router.put('/follow-member', authCheck, followMember);
 router.put('/unfollow-member', authCheck, unfollowMember);
 router.post('/fetch-allies', authCheck, getAllies);
 router.post('/fetch-explorers', authCheck, getExplorers);
+router.put('/update-profile-with-image', authCheck, updateProfileWithImage);
+router.put('/update-profile', authCheck, updateProfile);
 
 module.exports = router;

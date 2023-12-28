@@ -342,3 +342,46 @@ exports.getExplorers = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.updateProfileWithImage = async (req, res) => {
+  const { _id, name, bio, profileImage } = req.body;
+  try {
+    const data = {};
+    if (name) {
+      data.name = name;
+    }
+    if (bio) {
+      data.bio = bio;
+    }
+    if (profileImage) {
+      data.profileImage = profileImage;
+    }
+    const user = await User.findByIdAndUpdate(_id, data, {
+      new: true,
+    }).select(`name bio profileImage`);
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { _id, name, bio } = req.body;
+  try {
+    const data = {};
+    if (name) {
+      data.name = name;
+    }
+    if (bio) {
+      data.bio = bio;
+    }
+    const user = await User.findByIdAndUpdate(_id, data, {
+      new: true,
+    }).select(`name bio`);
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
