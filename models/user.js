@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, default: 'subscriber' },
     xp: { type: Number, default: 0 },
     rank: { type: String, default: 'Space Explorer' },
-    bio: { type: String, maxLength: 1000 },
+    bio: { type: String, maxLength: 250 },
     profileImage: {
       url: String,
       public_id: String,
