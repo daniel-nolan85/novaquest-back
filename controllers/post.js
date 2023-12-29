@@ -64,3 +64,69 @@ exports.fetchUsersPosts = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.likePost = async (req, res) => {
+  const { _id, postId } = req.body;
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      { $addToSet: { likes: _id } },
+      { new: true }
+    )
+      .populate('likes', '_id name rank profileImage')
+      .populate('comments.postedBy', '_id name rank profileImage');
+    res.json(post);
+  } catch (err) {
+    console.error('Error liking post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.unlikePost = async (req, res) => {
+  const { _id, postId } = req.body;
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { likes: _id },
+      },
+      { new: true }
+    );
+    res.json(post);
+  } catch (err) {
+    console.error('Error unliking post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.addComment = async (req, res) => {
+  const { _id, postId, text } = req.body;
+  console.log('addComment => ', _id, postId, text);
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: { comments: { text, postedBy: _id } },
+      },
+      { new: true }
+    );
+    res.json(post);
+  } catch (err) {
+    console.error('Error commenting on post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.fetchComments = async (req, res) => {
+  const { postId } = req.body;
+  try {
+    const post = await Post.findById(postId)
+      .select('comments')
+      .populate('comments.postedBy', '_id name rank profileImage')
+      .sort({ createdAt: -1 });
+    res.json(post);
+  } catch (err) {
+    console.error('Error retrieving comments:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
