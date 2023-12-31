@@ -252,7 +252,7 @@ exports.fetchThisUser = async (req, res) => {
   const { userId } = req.body;
   try {
     const user = await User.findById(userId).select(
-      'profileImage name rank bio'
+      'profileImage name rank bio daysInSpace'
     );
     res.json(user);
   } catch (error) {
@@ -382,6 +382,19 @@ exports.updateProfile = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.usersAchievements = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const achievements = await User.findById(_id).select(
+      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager'
+    );
+    res.json(achievements);
+  } catch (err) {
+    console.error('Error retrieving achievements:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

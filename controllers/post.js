@@ -65,6 +65,21 @@ exports.fetchUsersPosts = async (req, res) => {
   }
 };
 
+exports.fetchUsersStars = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const posts = await Post.find({ likes: { $in: [_id] } })
+      .populate('postedBy', '_id name rank profileImage')
+      .populate('comments.postedBy', '_id name rank profileImage')
+      .populate('likes', '_id name rank profileImage')
+      .sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) {
+    console.error('Error retrieving stars:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.likePost = async (req, res) => {
   const { _id, postId } = req.body;
   try {
@@ -101,7 +116,6 @@ exports.unlikePost = async (req, res) => {
 
 exports.addComment = async (req, res) => {
   const { _id, postId, text } = req.body;
-  console.log('addComment => ', _id, postId, text);
   try {
     const post = await Post.findByIdAndUpdate(
       postId,

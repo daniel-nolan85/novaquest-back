@@ -19,6 +19,7 @@ const {
   getExplorers,
   updateProfileWithImage,
   updateProfile,
+  usersAchievements,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -35,5 +36,6 @@ router.post('/fetch-allies', authCheck, getAllies);
 router.post('/fetch-explorers', authCheck, getExplorers);
 router.put('/update-profile-with-image', authCheck, updateProfileWithImage);
 router.put('/update-profile', authCheck, updateProfile);
+router.post('/users-achievements', authCheck, usersAchievements);
 
 module.exports = router;
