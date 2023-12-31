@@ -18,7 +18,7 @@ const {
 
 router.post('/submit-post-with-images', authCheck, submitPostWithImages);
 router.post('/submit-post', authCheck, submitPost);
-router.get('/news-feed', authCheck, newsFeed);
+router.post('/news-feed', authCheck, newsFeed);
 router.post('/users-posts', authCheck, fetchUsersPosts);
 router.post('/users-stars', authCheck, fetchUsersStars);
 router.put('/like-post', authCheck, likePost);

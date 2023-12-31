@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     daysInSpace: Number,
     allies: [{ type: ObjectId, ref: 'User' }],
     explorers: [{ type: ObjectId, ref: 'User' }],
+    blockeds: [{ type: ObjectId, ref: 'User' }],
     textSpeed: { type: Number, default: 50 },
     viewedRovers: [{ type: String }],
     viewedRoverCameras: [{ type: String }],

@@ -20,6 +20,7 @@ const {
   updateProfileWithImage,
   updateProfile,
   usersAchievements,
+  blockUser,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -37,5 +38,6 @@ router.post('/fetch-explorers', authCheck, getExplorers);
 router.put('/update-profile-with-image', authCheck, updateProfileWithImage);
 router.put('/update-profile', authCheck, updateProfile);
 router.post('/users-achievements', authCheck, usersAchievements);
+router.put('/block-user', authCheck, blockUser);
 
 module.exports = router;

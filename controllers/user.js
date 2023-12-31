@@ -284,7 +284,7 @@ exports.followMember = async (req, res) => {
     );
     res.json(currentUser);
   } catch (error) {
-    console.error('Error fetching user:', error.message);
+    console.error('Error following user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -312,7 +312,7 @@ exports.unfollowMember = async (req, res) => {
     );
     res.json(currentUser);
   } catch (error) {
-    console.error('Error fetching user:', error.message);
+    console.error('Error unfollowing user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -395,6 +395,25 @@ exports.usersAchievements = async (req, res) => {
     res.json(achievements);
   } catch (err) {
     console.error('Error retrieving achievements:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.blockUser = async (req, res) => {
+  const { _id, userId } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: {
+          blockeds: userId,
+        },
+      },
+      { new: true }
+    ).select('blockeds');
+    res.json(user);
+  } catch (error) {
+    console.error('Error blocking user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

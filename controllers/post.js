@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const User = require('../models/user');
 
 exports.submitPostWithImages = async (req, res) => {
   const { _id, text, images } = req.body;
@@ -37,8 +38,13 @@ exports.submitPost = async (req, res) => {
 };
 
 exports.newsFeed = async (req, res) => {
+  const { _id } = req.body;
   try {
-    const posts = await Post.find()
+    const user = await User.findById(_id).select('blockeds');
+    const blockedUserIds = user.blockeds.map((blockedUser) => blockedUser._id);
+    const posts = await Post.find({
+      postedBy: { $nin: blockedUserIds },
+    })
       .populate('postedBy', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage')
       .populate('likes', '_id name rank profileImage')
