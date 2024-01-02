@@ -5,8 +5,10 @@ const router = express.Router();
 const { authCheck } = require('../middleware/auth');
 
 const {
-  submitPostWithImages,
+  submitPostWithMedia,
   submitPost,
+  editPostWithMedia,
+  editPost,
   newsFeed,
   fetchUsersPosts,
   fetchUsersStars,
@@ -16,8 +18,10 @@ const {
   fetchComments,
 } = require('../controllers/post');
 
-router.post('/submit-post-with-images', authCheck, submitPostWithImages);
+router.post('/submit-post-with-media', authCheck, submitPostWithMedia);
 router.post('/submit-post', authCheck, submitPost);
+router.put('/edit-post-with-media', authCheck, editPostWithMedia);
+router.put('/edit-post', authCheck, editPost);
 router.post('/news-feed', authCheck, newsFeed);
 router.post('/users-posts', authCheck, fetchUsersPosts);
 router.post('/users-stars', authCheck, fetchUsersStars);

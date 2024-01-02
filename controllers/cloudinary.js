@@ -6,27 +6,49 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-exports.uploadImagesToCloudinary = async (req, res) => {
+exports.uploadMediaToCloudinary = async (req, res) => {
   try {
     if (req.files && Object.keys(req.files).length > 0) {
       const results = await Promise.all(
         Object.values(req.files).map(async (file) => {
           try {
-            const result = await cloudinary.uploader.upload(file.path, {});
-            return { public_id: result.public_id, url: result.secure_url };
+            if (file.type.startsWith('image')) {
+              const result = await cloudinary.v2.uploader.upload(file.path, {
+                resource_type: 'image',
+              });
+              return {
+                public_id: result.public_id,
+                url: result.secure_url,
+                type: 'image',
+              };
+            } else if (file.type.startsWith('video')) {
+              const result = await cloudinary.v2.uploader.upload(file.path, {
+                resource_type: 'video',
+              });
+              return {
+                public_id: result.public_id,
+                url: result.secure_url,
+                type: 'video',
+              };
+            } else {
+              console.error('Unsupported file type:', file.type);
+              return null;
+            }
           } catch (error) {
             console.error('Error uploading to Cloudinary:', error);
             return null;
           }
         })
       );
+
       const validResults = results.filter((result) => result !== null);
+      console.log('validResults => ', validResults);
       res.json(validResults);
     } else {
-      res.status(400).json({ error: 'No images provided' });
+      res.status(400).json({ error: 'No media files provided' });
     }
   } catch (error) {
-    console.error('Error processing images:', error);
+    console.error('Error processing media:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

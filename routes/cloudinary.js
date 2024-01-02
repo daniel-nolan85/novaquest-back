@@ -5,13 +5,16 @@ const router = express.Router();
 
 const { authCheck } = require('../middleware/auth');
 
-const { uploadImagesToCloudinary } = require('../controllers/cloudinary');
+const {
+  uploadMediaToCloudinary,
+  destroyMediaFromCloudinary,
+} = require('../controllers/cloudinary');
 
 router.post(
-  '/upload-images',
+  '/upload-media',
   authCheck,
-  formidable({ maxFileSize: 10 * 1024 * 1024 }),
-  uploadImagesToCloudinary
+  formidable({ maxFileSize: 100 * 1024 * 1024 }),
+  uploadMediaToCloudinary
 );
 
 module.exports = router;

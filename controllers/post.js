@@ -1,15 +1,22 @@
 const Post = require('../models/post');
 const User = require('../models/user');
+const cloudinary = require('cloudinary');
 
-exports.submitPostWithImages = async (req, res) => {
-  const { _id, text, images } = req.body;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
+
+exports.submitPostWithMedia = async (req, res) => {
+  const { _id, text, media } = req.body;
   try {
     if (!text.length) {
       res.json({
         error: 'Content is required',
       });
     } else {
-      const post = new Post({ text, images, postedBy: _id });
+      const post = new Post({ text, media, postedBy: _id });
       post.save();
       res.json(post);
     }
@@ -33,6 +40,59 @@ exports.submitPost = async (req, res) => {
     }
   } catch (err) {
     console.error('Error submitting post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.editPostWithMedia = async (req, res) => {
+  const { text, media, mediaToDelete, postId } = req.body;
+  try {
+    const update = {};
+    if (text !== undefined && text !== '') {
+      update.text = text;
+    }
+    if (media !== undefined && Array.isArray(media) && media.length > 0) {
+      update.$push = { media: { $each: media } };
+    }
+    if (mediaToDelete && mediaToDelete.length > 0) {
+      await Post.findByIdAndUpdate(postId, {
+        $pull: { media: { public_id: { $in: mediaToDelete } } },
+      });
+      for (const publicId of mediaToDelete) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+    const post = await Post.findByIdAndUpdate(postId, update, {
+      new: true,
+    });
+    res.json(post);
+  } catch (err) {
+    console.error('Error updating post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.editPost = async (req, res) => {
+  const { text, mediaToDelete, postId } = req.body;
+  try {
+    const update = {};
+    if (text !== undefined && text !== '') {
+      update.text = text;
+    }
+    if (mediaToDelete && mediaToDelete.length > 0) {
+      await Post.findByIdAndUpdate(postId, {
+        $pull: { media: { public_id: { $in: mediaToDelete } } },
+      });
+      for (const publicId of mediaToDelete) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+    const post = await Post.findByIdAndUpdate(postId, update, {
+      new: true,
+    });
+    res.json(post);
+  } catch (err) {
+    console.error('Error updating post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
