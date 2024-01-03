@@ -97,6 +97,22 @@ exports.editPost = async (req, res) => {
   }
 };
 
+exports.deletePost = async (req, res) => {
+  const { postId } = req.body;
+  try {
+    const post = await Post.findById(postId);
+    const public_ids = post.media.map((img) => img.public_id);
+    for (const public_id of public_ids) {
+      const image = await cloudinary.uploader.destroy(public_id);
+    }
+    const postToDelete = await Post.findByIdAndDelete(postId);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Error deleting post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.newsFeed = async (req, res) => {
   const { _id } = req.body;
   try {

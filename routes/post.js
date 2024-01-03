@@ -3,12 +3,14 @@ const express = require('express');
 const router = express.Router();
 
 const { authCheck } = require('../middleware/auth');
+const { canEditDeletePost } = require('../middleware/post');
 
 const {
   submitPostWithMedia,
   submitPost,
   editPostWithMedia,
   editPost,
+  deletePost,
   newsFeed,
   fetchUsersPosts,
   fetchUsersStars,
@@ -20,8 +22,14 @@ const {
 
 router.post('/submit-post-with-media', authCheck, submitPostWithMedia);
 router.post('/submit-post', authCheck, submitPost);
-router.put('/edit-post-with-media', authCheck, editPostWithMedia);
-router.put('/edit-post', authCheck, editPost);
+router.put(
+  '/edit-post-with-media',
+  authCheck,
+  canEditDeletePost,
+  editPostWithMedia
+);
+router.put('/edit-post', authCheck, canEditDeletePost, editPost);
+router.put('/delete-post', authCheck, canEditDeletePost, deletePost);
 router.post('/news-feed', authCheck, newsFeed);
 router.post('/users-posts', authCheck, fetchUsersPosts);
 router.post('/users-stars', authCheck, fetchUsersStars);
