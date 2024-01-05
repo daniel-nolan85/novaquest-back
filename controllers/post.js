@@ -1,6 +1,9 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const cloudinary = require('cloudinary');
+const { Expo } = require('expo-server-sdk');
+
+const expo = new Expo();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -132,6 +135,20 @@ exports.newsFeed = async (req, res) => {
   }
 };
 
+exports.fetchSinglePost = async (req, res) => {
+  const { postId } = req.body;
+  try {
+    const post = await Post.findById(postId)
+      .populate('postedBy', '_id name rank profileImage')
+      .populate('comments.postedBy', '_id name rank profileImage')
+      .populate('likes', '_id name rank profileImage');
+    res.json(post);
+  } catch (err) {
+    console.error('Error retrieving post:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.fetchUsersPosts = async (req, res) => {
   const { _id } = req.body;
   try {
@@ -173,6 +190,41 @@ exports.likePost = async (req, res) => {
       .populate('likes', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage');
     res.json(post);
+
+    const { rank, name } = await User.findById(_id).select('rank name');
+    const { notificationToken } = await User.findById(post.postedBy).select(
+      'notificationToken'
+    );
+    if (Expo.isExpoPushToken(notificationToken)) {
+      const notification = {
+        to: notificationToken,
+        sound: 'default',
+        title: 'New Like!',
+        body: `${rank} ${name} liked your post.`,
+        icon: 'https://res.cloudinary.com/daufzqlld/image/upload/v1704319447/icon_kv0qsw.png',
+      };
+
+      try {
+        await expo.sendPushNotificationsAsync([notification]);
+      } catch (notificationError) {
+        console.error('Error sending notification:', notificationError.message);
+      }
+    }
+
+    if (post.postedBy.toString() !== _id) {
+      const newNotification = {
+        message: `${rank} ${name} liked your post.`,
+        postId,
+        user: _id,
+      };
+      const notifyOwner = await User.findByIdAndUpdate(
+        post.postedBy,
+        {
+          $push: { notifications: newNotification },
+        },
+        { new: true }
+      );
+    }
   } catch (err) {
     console.error('Error liking post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -207,6 +259,41 @@ exports.addComment = async (req, res) => {
       { new: true }
     );
     res.json(post);
+
+    const { rank, name } = await User.findById(_id).select('rank name');
+    const { notificationToken } = await User.findById(post.postedBy).select(
+      'notificationToken'
+    );
+    if (Expo.isExpoPushToken(notificationToken)) {
+      const notification = {
+        to: notificationToken,
+        sound: 'default',
+        title: 'New Comment!',
+        body: `${rank} ${name} commented on your post.`,
+        icon: 'https://res.cloudinary.com/daufzqlld/image/upload/v1704319447/icon_kv0qsw.png',
+      };
+
+      try {
+        await expo.sendPushNotificationsAsync([notification]);
+      } catch (notificationError) {
+        console.error('Error sending notification:', notificationError.message);
+      }
+    }
+
+    if (post.postedBy.toString() !== _id) {
+      const newNotification = {
+        message: `${rank} ${name} commented on your post.`,
+        postId,
+        user: _id,
+      };
+      const notifyOwner = await User.findByIdAndUpdate(
+        post.postedBy,
+        {
+          $push: { notifications: newNotification },
+        },
+        { new: true }
+      );
+    }
   } catch (err) {
     console.error('Error commenting on post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });

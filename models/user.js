@@ -6,6 +6,21 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: { type: String, required: true, index: true },
     role: { type: String, default: 'subscriber' },
+    notificationToken: String,
+    notifications: [
+      {
+        message: String,
+        postId: { type: ObjectId, ref: 'Post' },
+        user: { type: ObjectId, ref: 'User' },
+        timestamp: { type: Date, default: Date.now },
+      },
+    ],
+    newNotificationsCount: [
+      {
+        id: { type: String, required: true },
+        message: { type: String, required: true },
+      },
+    ],
     xp: { type: Number, default: 0 },
     rank: { type: String, default: 'Space Explorer' },
     bio: { type: String, maxLength: 250 },

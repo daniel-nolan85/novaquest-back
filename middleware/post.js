@@ -12,6 +12,6 @@ exports.canEditDeletePost = async (req, res, next) => {
       next();
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };

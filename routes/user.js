@@ -21,6 +21,9 @@ const {
   updateProfile,
   usersAchievements,
   blockUser,
+  incrementNotifsCount,
+  resetNotifsCount,
+  fetchUserSignals,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -39,5 +42,12 @@ router.put('/update-profile-with-image', authCheck, updateProfileWithImage);
 router.put('/update-profile', authCheck, updateProfile);
 router.post('/users-achievements', authCheck, usersAchievements);
 router.put('/block-user', authCheck, blockUser);
+router.put(
+  '/increment-new-notifications-count',
+  authCheck,
+  incrementNotifsCount
+);
+router.put('/reset-new-notifications-count', authCheck, resetNotifsCount);
+router.post('/fetch-user-notifications', authCheck, fetchUserSignals);
 
 module.exports = router;

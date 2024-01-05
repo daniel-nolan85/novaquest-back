@@ -12,6 +12,7 @@ const {
   editPost,
   deletePost,
   newsFeed,
+  fetchSinglePost,
   fetchUsersPosts,
   fetchUsersStars,
   likePost,
@@ -31,6 +32,7 @@ router.put(
 router.put('/edit-post', authCheck, canEditDeletePost, editPost);
 router.put('/delete-post', authCheck, canEditDeletePost, deletePost);
 router.post('/news-feed', authCheck, newsFeed);
+router.post('/single-post', authCheck, fetchSinglePost);
 router.post('/users-posts', authCheck, fetchUsersPosts);
 router.post('/users-stars', authCheck, fetchUsersStars);
 router.put('/like-post', authCheck, likePost);

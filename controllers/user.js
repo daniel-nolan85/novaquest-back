@@ -417,3 +417,56 @@ exports.blockUser = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.incrementNotifsCount = async (req, res) => {
+  const { _id, userId, message } = req.body;
+  try {
+    const { rank, name } = await User.findById(userId).select('rank name');
+    const timestamp = new Date().toISOString();
+    const notificationMessage = `${rank} ${name} ${message}`;
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: {
+          newNotificationsCount: {
+            id: timestamp,
+            message: notificationMessage,
+          },
+        },
+      },
+      { new: true }
+    ).select('newNotificationsCount');
+    res.json(user);
+  } catch (error) {
+    console.error('Error incrementing notifs:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.resetNotifsCount = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { $set: { newNotificationsCount: [] } },
+      { new: true }
+    ).select('newNotificationsCount');
+    res.json(user);
+  } catch (error) {
+    console.error('Error resetting notifs:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.fetchUserSignals = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const user = await User.findById(_id)
+      .select('notifications')
+      .populate('notifications.user', '_id profileImage name rank');
+    res.json(user);
+  } catch (error) {
+    console.error('Error retrieving user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

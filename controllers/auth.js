@@ -36,3 +36,18 @@ exports.currentUser = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.storeNotifToken = async (req, res) => {
+  const { _id, notificationToken } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { notificationToken },
+      { new: true }
+    );
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

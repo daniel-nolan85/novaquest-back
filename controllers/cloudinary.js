@@ -42,7 +42,6 @@ exports.uploadMediaToCloudinary = async (req, res) => {
       );
 
       const validResults = results.filter((result) => result !== null);
-      console.log('validResults => ', validResults);
       res.json(validResults);
     } else {
       res.status(400).json({ error: 'No media files provided' });
