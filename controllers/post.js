@@ -313,3 +313,20 @@ exports.fetchComments = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.reportPost = async (req, res) => {
+  const { postId } = req.body;
+  try {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $set: { reported: true },
+      },
+      { new: true }
+    );
+    res.json(post);
+  } catch (err) {
+    console.error('Error retrieving comments:', err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

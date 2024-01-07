@@ -19,6 +19,7 @@ const {
   unlikePost,
   addComment,
   fetchComments,
+  reportPost,
 } = require('../controllers/post');
 
 router.post('/submit-post-with-media', authCheck, submitPostWithMedia);
@@ -39,5 +40,6 @@ router.put('/like-post', authCheck, likePost);
 router.put('/unlike-post', authCheck, unlikePost);
 router.put('/add-comment', authCheck, addComment);
 router.post('/get-comments', authCheck, fetchComments);
+router.post('/report-post', authCheck, reportPost);
 
 module.exports = router;
