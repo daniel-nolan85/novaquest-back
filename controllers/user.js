@@ -1,27 +1,5 @@
 const User = require('../models/user');
 
-exports.updateUserName = async (req, res) => {
-  const { _id, name } = req.body;
-
-  if (!_id || !name) {
-    return res
-      .status(400)
-      .json({ error: 'Invalid request. Missing required parameters.' });
-  }
-
-  try {
-    const user = await User.findOneAndUpdate(
-      { _id },
-      { $set: { name } },
-      { new: true }
-    ).select('name');
-    res.json(user);
-  } catch (error) {
-    console.error('Error fetching user:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
 exports.awardXP = async (req, res) => {
   const { _id, xp } = req.body;
   try {
@@ -103,30 +81,30 @@ exports.updateViewedRovers = async (req, res) => {
   const { _id, rover, camera, dateType } = req.body;
   const allRovers = ['curiosity', 'opportunity', 'perseverance', 'spirit'];
   const allCameras = [
-    'fhaz',
-    'rhaz',
-    'mast',
-    'chemcam',
-    'mahli',
-    'mardi',
-    'navcam',
-    'pancam',
-    'minites',
-    'edl_rucam',
-    'edl_rdcam',
-    'edl_ddcam',
-    'edl_pucam1',
-    'edl_pucam2',
-    'navcam_left',
-    'navcam_right',
-    'mcz_left',
-    'mcz_right',
-    'front_hazcam_left_a',
-    'front_hazcam_right_a',
-    'rear_hazcam_left',
-    'rear_hazcam_right',
-    'skycam',
-    'sherloc_watson',
+    'FHAZ',
+    'RHAZ',
+    'MAST',
+    'CHEMCAM',
+    'MAHLI',
+    'MARDI',
+    'NAVCAM',
+    'PANCAM',
+    'MINITES',
+    'EDL_RUCAM',
+    'EDL_RDCAM',
+    'EDL_DDCAM',
+    'EDL_PUCAM1',
+    'EDL_PUCAM2',
+    'NAVCAM_LEFT',
+    'NAVCAM_RIGHT',
+    'MCZ_RIGHT',
+    'MCZ_LEFT',
+    'FRONT_HAZCAM_LEFT_A',
+    'FRONT_HAZCAM_RIGHT_A',
+    'REAR_HAZCAM_LEFT',
+    'REAR_HAZCAM_RIGHT',
+    'SKYCAM',
+    'SHERLOC_WATSON',
   ];
   const allDateTypes = ['sol', 'earth_date'];
 

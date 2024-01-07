@@ -3,7 +3,9 @@ const User = require('../models/user');
 exports.filterSignalsByDate = async (req, res) => {
   const { _id, startDate, endDate } = req.body;
   const startDateTime = new Date(startDate);
+  startDateTime.setHours(0, 0, 0, 0);
   const endDateTime = new Date(endDate);
+  endDateTime.setHours(23, 59, 59, 999);
   try {
     const signals = await User.findById(_id)
       .select('notifications')
