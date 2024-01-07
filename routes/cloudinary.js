@@ -16,5 +16,6 @@ router.post(
   formidable({ maxFileSize: 100 * 1024 * 1024 }),
   uploadMediaToCloudinary
 );
+router.post('/destroy-media', authCheck, destroyMediaFromCloudinary);
 
 module.exports = router;

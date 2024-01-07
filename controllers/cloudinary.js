@@ -51,3 +51,9 @@ exports.uploadMediaToCloudinary = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.destroyMediaFromCloudinary = async (req, res) => {
+  const { publicId } = req.body;
+  await cloudinary.uploader.destroy(publicId);
+  res.json({ ok: true });
+};
