@@ -330,3 +330,25 @@ exports.reportPost = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.filterPostsByQuery = async (req, res) => {
+  const { query } = req.body;
+  try {
+    let posts = await Post.find()
+      .populate('postedBy', '_id name rank profileImage')
+      .sort({ createdAt: -1 })
+      .exec();
+    posts = posts.filter((post) => {
+      const postTextLower = post.text.toLowerCase();
+      const userNameLower = post.postedBy.name.toLowerCase();
+      return (
+        postTextLower.includes(query.toLowerCase()) ||
+        userNameLower.includes(query.toLowerCase())
+      );
+    });
+    res.json(posts);
+  } catch (error) {
+    console.error('Error fetching signals:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
