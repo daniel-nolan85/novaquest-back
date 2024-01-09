@@ -102,6 +102,7 @@ exports.editPost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   const { postId } = req.body;
+  console.log('postId => ', postId);
   try {
     const post = await Post.findById(postId);
     const public_ids = post.media.map((img) => img.public_id);
@@ -109,6 +110,7 @@ exports.deletePost = async (req, res) => {
       const image = await cloudinary.uploader.destroy(public_id);
     }
     const postToDelete = await Post.findByIdAndDelete(postId);
+    console.log('post => ', post);
     res.json({ ok: true });
   } catch (err) {
     console.error('Error deleting post:', err.message);
@@ -117,7 +119,7 @@ exports.deletePost = async (req, res) => {
 };
 
 exports.newsFeed = async (req, res) => {
-  const { _id } = req.body;
+  const { _id, page, pageSize } = req.body;
   try {
     const user = await User.findById(_id).select('blockeds');
     const blockedUserIds = user.blockeds.map((blockedUser) => blockedUser._id);
@@ -127,7 +129,9 @@ exports.newsFeed = async (req, res) => {
       .populate('postedBy', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage')
       .populate('likes', '_id name rank profileImage')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
     res.json(posts);
   } catch (err) {
     console.error('Error retrieving posts:', err.message);
@@ -150,13 +154,15 @@ exports.fetchSinglePost = async (req, res) => {
 };
 
 exports.fetchUsersPosts = async (req, res) => {
-  const { _id } = req.body;
+  const { _id, page, pageSize } = req.body;
   try {
     const posts = await Post.find({ postedBy: _id })
       .populate('postedBy', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage')
       .populate('likes', '_id name rank profileImage')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
     res.json(posts);
   } catch (err) {
     console.error('Error retrieving posts:', err.message);
@@ -165,13 +171,15 @@ exports.fetchUsersPosts = async (req, res) => {
 };
 
 exports.fetchUsersStars = async (req, res) => {
-  const { _id } = req.body;
+  const { _id, page, pageSize } = req.body;
   try {
     const posts = await Post.find({ likes: { $in: [_id] } })
       .populate('postedBy', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage')
       .populate('likes', '_id name rank profileImage')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
     res.json(posts);
   } catch (err) {
     console.error('Error retrieving stars:', err.message);
