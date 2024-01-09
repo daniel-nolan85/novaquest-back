@@ -5,6 +5,7 @@ const router = express.Router();
 const { authCheck } = require('../middleware/auth');
 
 const {
+  updateUserName,
   awardXP,
   badgeUnlocked,
   promoteUser,
@@ -25,6 +26,7 @@ const {
   fetchUserSignals,
 } = require('../controllers/user');
 
+router.put('/update-user-name', authCheck, updateUserName);
 router.put('/award-xp', authCheck, awardXP);
 router.put('/badge-unlocked', authCheck, badgeUnlocked);
 router.put('/promote-user', authCheck, promoteUser);

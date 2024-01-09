@@ -1,5 +1,27 @@
 const User = require('../models/user');
 
+exports.updateUserName = async (req, res) => {
+  const { _id, name } = req.body;
+
+  if (!_id || !name) {
+    return res
+      .status(400)
+      .json({ error: 'Invalid request. Missing required parameters.' });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $set: { name } },
+      { new: true }
+    ).select('name');
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.awardXP = async (req, res) => {
   const { _id, xp } = req.body;
   try {

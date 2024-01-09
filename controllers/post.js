@@ -154,7 +154,7 @@ exports.fetchSinglePost = async (req, res) => {
 };
 
 exports.fetchUsersPosts = async (req, res) => {
-  const { _id, page, pageSize } = req.body;
+  const { _id, page, pageSize, initialIndex } = req.body;
   try {
     const posts = await Post.find({ postedBy: _id })
       .populate('postedBy', '_id name rank profileImage')
@@ -171,7 +171,7 @@ exports.fetchUsersPosts = async (req, res) => {
 };
 
 exports.fetchUsersStars = async (req, res) => {
-  const { _id, page, pageSize } = req.body;
+  const { _id, page, pageSize, initialIndex } = req.body;
   try {
     const posts = await Post.find({ likes: { $in: [_id] } })
       .populate('postedBy', '_id name rank profileImage')
