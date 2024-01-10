@@ -345,7 +345,6 @@ exports.getExplorers = async (req, res) => {
 
 exports.updateProfileWithImage = async (req, res) => {
   const { _id, name, bio, profileImage } = req.body;
-  console.log('profileImage => ', profileImage);
   try {
     const data = {};
     if (name) {

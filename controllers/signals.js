@@ -12,7 +12,6 @@ exports.filterSignalsByDate = async (req, res) => {
       .where('notifications.timestamp')
       .gte(startDateTime)
       .lte(endDateTime);
-    console.log('signals => ', signals);
     res.json(signals);
   } catch (error) {
     console.error('Error fetching signals:', error.message);

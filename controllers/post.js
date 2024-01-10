@@ -102,7 +102,6 @@ exports.editPost = async (req, res) => {
 
 exports.deletePost = async (req, res) => {
   const { postId } = req.body;
-  console.log('postId => ', postId);
   try {
     const post = await Post.findById(postId);
     const public_ids = post.media.map((img) => img.public_id);
@@ -110,7 +109,6 @@ exports.deletePost = async (req, res) => {
       const image = await cloudinary.uploader.destroy(public_id);
     }
     const postToDelete = await Post.findByIdAndDelete(postId);
-    console.log('post => ', post);
     res.json({ ok: true });
   } catch (err) {
     console.error('Error deleting post:', err.message);
