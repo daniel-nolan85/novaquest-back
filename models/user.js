@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     lastLoginDate: String,
     daysInSpace: Number,
+    highScore: Number,
     allies: [{ type: ObjectId, ref: 'User' }],
     explorers: [{ type: ObjectId, ref: 'User' }],
     blockeds: [{ type: ObjectId, ref: 'User' }],

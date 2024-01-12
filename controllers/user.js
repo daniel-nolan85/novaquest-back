@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Leaderboard = require('../models/leaderboard');
 
 exports.updateUserName = async (req, res) => {
   const { _id, name } = req.body;
@@ -467,6 +468,38 @@ exports.fetchUserSignals = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error retrieving user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.catchScore = async (req, res) => {
+  const { _id, score } = req.body;
+  const normalizedScore = Math.max(score, 0);
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { $max: { highScore: normalizedScore } },
+      { new: true }
+    );
+    const leaderboardEntries = await Leaderboard.find({})
+      .sort({ score: -1 })
+      .limit(100);
+    if (
+      leaderboardEntries.length < 100 ||
+      normalizedScore > leaderboardEntries[99].score
+    ) {
+      const newLeaderboardEntry = new Leaderboard({
+        player: _id,
+        score: normalizedScore,
+      });
+      await newLeaderboardEntry.save();
+      if (leaderboardEntries.length === 100) {
+        await Leaderboard.findByIdAndDelete(leaderboardEntries[99]._id);
+      }
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
