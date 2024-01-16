@@ -391,7 +391,7 @@ exports.usersAchievements = async (req, res) => {
   const { _id } = req.body;
   try {
     const achievements = await User.findById(_id).select(
-      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager achievedCelestialCadet achievedAstroAce achievedGalacticAviator achievedCosmicArranger achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler achievedStellarSupporter achievedCosmicConversationalist'
+      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager achievedCelestialCadet achievedAstroAce achievedGalacticAviator achievedCosmicArranger achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler achievedStellarSupporter achievedCosmicConversationalist achievedGalacticPlanetologist'
     );
     res.json(achievements);
   } catch (err) {
@@ -551,6 +551,50 @@ exports.awardAchievement = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error awarding achievement:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateViewedPlanets = async (req, res) => {
+  const { _id, name } = req.body;
+  const allPlanets = [
+    'mercury',
+    'venus',
+    'earth',
+    'mars',
+    'ceres',
+    'jupiter',
+    'saturn',
+    'uranus',
+    'neptune',
+    'pluto',
+    'haumea',
+    'makemake',
+    'eris',
+  ];
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: { viewedPlanets: name },
+      },
+      { new: true }
+    ).select('viewedPlanets achievedGalacticPlanetologist');
+
+    const hasViewedAllPlanets = allPlanets.every((name) =>
+      user.viewedPlanets.includes(name)
+    );
+
+    let achievement = '';
+
+    if (hasViewedAllPlanets && !user.achievedGalacticPlanetologist) {
+      achievement = 'PlanetsAllComplete';
+    }
+
+    res.json({ user, achievement });
+  } catch (error) {
+    console.error('Error updating planets:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

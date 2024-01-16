@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
     viewedRovers: [{ type: String }],
     viewedRoverCameras: [{ type: String }],
     viewedRoverDateTypes: [{ type: String }],
+    viewedPlanets: [{ type: String }],
     numOfPosts: { type: Number, default: 0 },
     numOfStars: { type: Number, default: 0 },
     numOfComments: { type: Number, default: 0 },
@@ -74,6 +75,7 @@ const userSchema = new mongoose.Schema(
     achievedCosmicChronicler: { type: Boolean, default: false },
     achievedStellarSupporter: { type: Boolean, default: false },
     achievedCosmicConversationalist: { type: Boolean, default: false },
+    achievedGalacticPlanetologist: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

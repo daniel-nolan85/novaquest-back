@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Blocked = require('../models/blocked');
 const admin = require('../firebase');
+const nodemailer = require('nodemailer');
 
 exports.checkBlockedList = async (req, res) => {
   const { email } = req.params;
@@ -75,4 +76,43 @@ exports.deleteAccount = async (req, res) => {
     console.error('Error deleting user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+};
+
+exports.sendEmail = async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'nolancode20@gmail.com',
+      pass: process.env.GMAIL_AUTHORIZATION,
+    },
+    secure: true,
+  });
+
+  let mailOptions = {
+    from: 'nolancode20@gmail.com',
+    to: 'nolancode20@gmail.com',
+    subject: subject,
+    html: `
+      <h3>Information</h3>
+      <ul>
+      <li>Name: ${name}</li>
+      <li>Email: ${email}</li>
+      </ul>
+
+      <h3>Message</h3>
+      <p>${message}</p>
+      `,
+  };
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send('Success');
+    }
+  });
+
+  transporter.close();
 };
