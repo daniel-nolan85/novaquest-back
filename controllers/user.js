@@ -48,7 +48,7 @@ exports.badgeUnlocked = async (req, res) => {
     ).select(badge);
     res.json(user);
   } catch (error) {
-    console.error('Error fetching user:', error.message);
+    console.error('Error unlocking badge:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -391,7 +391,7 @@ exports.usersAchievements = async (req, res) => {
   const { _id } = req.body;
   try {
     const achievements = await User.findById(_id).select(
-      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager'
+      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager achievedCelestialCadet achievedAstroAce achievedGalacticAviator achievedCosmicArranger achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler achievedStellarSupporter achievedCosmicConversationalist'
     );
     res.json(achievements);
   } catch (err) {
@@ -480,7 +480,37 @@ exports.catchScore = async (req, res) => {
       _id,
       { $max: { highScore: normalizedScore } },
       { new: true }
+    ).select(
+      'highScore achievedCelestialCadet achievedAstroAce achievedGalacticAviator'
     );
+
+    const achievements = [];
+
+    if (normalizedScore > 499 && !user.achievedGalacticAviator) {
+      if (!user.achievedCelestialCadet) {
+        achievements.push('AstroScoreOver50');
+        user.achievedCelestialCadet = true;
+      }
+      if (!user.achievedAstroAce) {
+        achievements.push('AstroScoreOver100');
+        user.achievedAstroAce = true;
+      }
+      achievements.push('AstroScoreOver500');
+      user.achievedGalacticAviator = true;
+    } else if (normalizedScore > 99 && !user.achievedAstroAce) {
+      if (!user.achievedCelestialCadet) {
+        achievements.push('AstroScoreOver50');
+        user.achievedCelestialCadet = true;
+      }
+      achievements.push('AstroScoreOver100');
+      user.achievedAstroAce = true;
+    } else if (normalizedScore > 49 && !user.achievedCelestialCadet) {
+      achievements.push('AstroScoreOver50');
+      user.achievedCelestialCadet = true;
+    }
+
+    await user.save();
+
     const leaderboardEntries = await Leaderboard.find({})
       .sort({ score: -1 })
       .limit(100);
@@ -497,9 +527,30 @@ exports.catchScore = async (req, res) => {
         await Leaderboard.findByIdAndDelete(leaderboardEntries[99]._id);
       }
     }
-    res.json(user);
+    if (achievements.length > 1) {
+      res.json({ user, simultaneousAchievements: achievements });
+    } else if (achievements.length === 1) {
+      res.json({ user, achievement: achievements[0] });
+    } else {
+      res.json({ user, noAchievements: true });
+    }
   } catch (error) {
     console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.awardAchievement = async (req, res) => {
+  const { _id, achievement } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { $set: { [achievement]: true } },
+      { new: true }
+    ).select(achievement);
+    res.json(user);
+  } catch (error) {
+    console.error('Error awarding achievement:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

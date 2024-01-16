@@ -21,7 +21,36 @@ exports.submitPostWithMedia = async (req, res) => {
     } else {
       const post = new Post({ text, media, postedBy: _id });
       post.save();
-      res.json(post);
+      const user = await User.findById(_id).select(
+        'numOfPosts achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler'
+      );
+
+      const numOfPosts = user.numOfPosts + 1;
+      const updateFields = {};
+      let achievement = '';
+
+      if (numOfPosts === 1 && !user.achievedCelestialContributor) {
+        updateFields.achievedCelestialContributor = true;
+        achievement = 'FirstPost';
+      } else if (numOfPosts === 10 && !user.achievedProlificExplorer) {
+        updateFields.achievedProlificExplorer = true;
+        achievement = 'TenthPost';
+      } else if (numOfPosts === 50 && !user.achievedGalaxyLuminary) {
+        updateFields.achievedGalaxyLuminary = true;
+        achievement = 'FiftiethPost';
+      } else if (numOfPosts === 250 && !user.achievedCosmicChronicler) {
+        updateFields.achievedCosmicChronicler = true;
+        achievement = 'TwoHundredFiftiethPost';
+      }
+
+      user.set({
+        numOfPosts: user.numOfPosts + 1,
+        ...updateFields,
+      });
+
+      await user.save();
+
+      res.json(achievement);
     }
   } catch (err) {
     console.error('Error submitting post:', err.message);
@@ -39,7 +68,37 @@ exports.submitPost = async (req, res) => {
     } else {
       const post = new Post({ text, postedBy: _id });
       post.save();
-      res.json(post);
+
+      const user = await User.findById(_id).select(
+        'numOfPosts achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler'
+      );
+
+      const numOfPosts = user.numOfPosts + 1;
+      const updateFields = {};
+      let achievement = '';
+
+      if (numOfPosts === 1 && !user.achievedCelestialContributor) {
+        updateFields.achievedCelestialContributor = true;
+        achievement = 'FirstPost';
+      } else if (numOfPosts === 10 && !user.achievedProlificExplorer) {
+        updateFields.achievedProlificExplorer = true;
+        achievement = 'TenthPost';
+      } else if (numOfPosts === 50 && !user.achievedGalaxyLuminary) {
+        updateFields.achievedGalaxyLuminary = true;
+        achievement = 'FiftiethPost';
+      } else if (numOfPosts === 250 && !user.achievedCosmicChronicler) {
+        updateFields.achievedCosmicChronicler = true;
+        achievement = 'TwoHundredFiftiethPost';
+      }
+
+      user.set({
+        numOfPosts: user.numOfPosts + 1,
+        ...updateFields,
+      });
+
+      await user.save();
+
+      res.json(achievement);
     }
   } catch (err) {
     console.error('Error submitting post:', err.message);
@@ -101,7 +160,7 @@ exports.editPost = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-  const { postId } = req.body;
+  const { _id, postId } = req.body;
   try {
     const post = await Post.findById(postId);
     const public_ids = post.media.map((img) => img.public_id);
@@ -109,6 +168,11 @@ exports.deletePost = async (req, res) => {
       const image = await cloudinary.uploader.destroy(public_id);
     }
     const postToDelete = await Post.findByIdAndDelete(postId);
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { $inc: { numOfPosts: -1 } },
+      { new: true }
+    );
     res.json({ ok: true });
   } catch (err) {
     console.error('Error deleting post:', err.message);
@@ -195,7 +259,6 @@ exports.likePost = async (req, res) => {
     )
       .populate('likes', '_id name rank profileImage')
       .populate('comments.postedBy', '_id name rank profileImage');
-    res.json(post);
 
     const { rank, name } = await User.findById(_id).select('rank name');
     const { notificationToken } = await User.findById(post.postedBy).select(
@@ -231,6 +294,28 @@ exports.likePost = async (req, res) => {
         { new: true }
       );
     }
+
+    const user = await User.findById(_id).select(
+      'numOfStars achievedStellarSupporter'
+    );
+
+    const numOfStars = user.numOfStars + 1;
+    const updateFields = {};
+    let achievement = '';
+
+    if (numOfStars === 3 && !user.achievedStellarSupporter) {
+      updateFields.achievedStellarSupporter = true;
+      achievement = 'ThreeHundredStars';
+    }
+
+    user.set({
+      numOfStars: user.numOfStars + 1,
+      ...updateFields,
+    });
+
+    await user.save();
+
+    res.json({ post, achievement });
   } catch (err) {
     console.error('Error liking post:', err.message);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -245,6 +330,11 @@ exports.unlikePost = async (req, res) => {
       {
         $pull: { likes: _id },
       },
+      { new: true }
+    );
+    const user = await User.findByIdAndUpdate(
+      _id,
+      { $inc: { numOfStars: -1 } },
       { new: true }
     );
     res.json(post);
@@ -264,7 +354,28 @@ exports.addComment = async (req, res) => {
       },
       { new: true }
     );
-    res.json(post);
+
+    const user = await User.findById(_id).select(
+      'numOfComments achievedCosmicConversationalist'
+    );
+
+    const numOfComments = user.numOfComments + 1;
+    const updateFields = {};
+    let achievement = '';
+
+    if (numOfComments === 3 && !user.achievedCosmicConversationalist) {
+      updateFields.achievedCosmicConversationalist = true;
+      achievement = 'ThreeHundredComments';
+    }
+
+    user.set({
+      numOfComments: user.numOfComments + 1,
+      ...updateFields,
+    });
+
+    await user.save();
+
+    res.json({ post, achievement });
 
     const { rank, name } = await User.findById(_id).select('rank name');
     const { notificationToken } = await User.findById(post.postedBy).select(

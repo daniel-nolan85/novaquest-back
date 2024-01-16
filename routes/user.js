@@ -25,6 +25,7 @@ const {
   resetNotifsCount,
   fetchUserSignals,
   catchScore,
+  awardAchievement,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -51,5 +52,6 @@ router.put(
 router.put('/reset-new-notifications-count', authCheck, resetNotifsCount);
 router.post('/fetch-user-notifications', authCheck, fetchUserSignals);
 router.put('/catch-score', authCheck, catchScore);
+router.put('/award-achievement', authCheck, awardAchievement);
 
 module.exports = router;
