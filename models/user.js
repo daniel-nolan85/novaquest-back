@@ -42,6 +42,9 @@ const userSchema = new mongoose.Schema(
     numOfPosts: { type: Number, default: 0 },
     numOfStars: { type: Number, default: 0 },
     numOfComments: { type: Number, default: 0 },
+    numOfApods: { type: Number, default: 0 },
+    numOfFacts: { type: Number, default: 0 },
+    numOfAsteroids: { type: Number, default: 0 },
     achievedCosmicPioneer: { type: Boolean, default: false },
     achievedAdventurousExplorer: { type: Boolean, default: false },
     achievedStellarVoyager: { type: Boolean, default: false },
@@ -76,6 +79,12 @@ const userSchema = new mongoose.Schema(
     achievedStellarSupporter: { type: Boolean, default: false },
     achievedCosmicConversationalist: { type: Boolean, default: false },
     achievedGalacticPlanetologist: { type: Boolean, default: false },
+    achievedCosmicObserver: { type: Boolean, default: false },
+    achievedNebulaGazer: { type: Boolean, default: false },
+    achievedGalacticVisionary: { type: Boolean, default: false },
+    achievedAsteroidScholar: { type: Boolean, default: false },
+    achievedCelestialSavant: { type: Boolean, default: false },
+    achievedCosmicPersona: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

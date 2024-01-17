@@ -27,6 +27,8 @@ const {
   catchScore,
   awardAchievement,
   updateViewedPlanets,
+  updateApods,
+  updateAsteroids,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -55,5 +57,7 @@ router.post('/fetch-user-notifications', authCheck, fetchUserSignals);
 router.put('/catch-score', authCheck, catchScore);
 router.put('/award-achievement', authCheck, awardAchievement);
 router.put('/update-planets-viewed', authCheck, updateViewedPlanets);
+router.put('/update-apods', authCheck, updateApods);
+router.put('/update-asteroids', authCheck, updateAsteroids);
 
 module.exports = router;

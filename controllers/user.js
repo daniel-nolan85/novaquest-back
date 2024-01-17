@@ -391,7 +391,7 @@ exports.usersAchievements = async (req, res) => {
   const { _id } = req.body;
   try {
     const achievements = await User.findById(_id).select(
-      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager achievedCelestialCadet achievedAstroAce achievedGalacticAviator achievedCosmicArranger achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler achievedStellarSupporter achievedCosmicConversationalist achievedGalacticPlanetologist'
+      'achievedCosmicPioneer achievedAdventurousExplorer achievedStellarVoyager achievedAstroPioneer achievedCosmicTrailblazer achievedCelestialNomad achievedGalacticWayfarer achievedInterstellarVoyager achievedStellarCenturion achievedVoyagerExtraordinaire achievedRedPlanetVoyager achievedMarsRoverMaestro achievedMartianLensMaster achievedCosmicChronologist achievedCosmicCadet achievedStarNavigator achievedGalacticSage achievedNovaScholar achievedQuasarVirtuoso achievedSupernovaSavant achievedLightSpeedExplorer achievedOdysseyTrailblazer achievedInfinityVoyager achievedCelestialCadet achievedAstroAce achievedGalacticAviator achievedCosmicArranger achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler achievedStellarSupporter achievedCosmicConversationalist achievedGalacticPlanetologist achievedCosmicObserver achievedNebulaGazer achievedGalacticVisionary achievedAsteroidScholar achievedCelestialSavant achievedCosmicPersona'
     );
     res.json(achievements);
   } catch (err) {
@@ -590,11 +590,75 @@ exports.updateViewedPlanets = async (req, res) => {
 
     if (hasViewedAllPlanets && !user.achievedGalacticPlanetologist) {
       achievement = 'PlanetsAllComplete';
+      user.achievedGalacticPlanetologist = true;
     }
+    await user.save();
 
     res.json({ user, achievement });
   } catch (error) {
     console.error('Error updating planets:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateApods = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $inc: { numOfApods: 1 },
+      },
+      { new: true }
+    ).select(
+      'numOfApods achievedCosmicObserver achievedNebulaGazer achievedGalacticVisionary'
+    );
+
+    let achievement = '';
+
+    if (user.numOfApods === 10 && !user.achievedCosmicObserver) {
+      achievement = 'Apods10Complete';
+      user.achievedCosmicObserver = true;
+    }
+    if (user.numOfApods === 50 && !user.achievedNebulaGazer) {
+      achievement = 'Apods50Complete';
+      user.achievedNebulaGazer = true;
+    }
+    if (user.numOfApods === 250 && !user.achievedGalacticVisionary) {
+      achievement = 'Apods250Complete';
+      user.achievedGalacticVisionary = true;
+    }
+    await user.save();
+
+    res.json({ user, achievement });
+  } catch (error) {
+    console.error('Error updating apods:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateAsteroids = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $inc: { numOfAsteroids: 1 },
+      },
+      { new: true }
+    ).select('numOfAsteroids achievedAsteroidScholar');
+
+    let achievement = '';
+
+    if (user.numOfAsteroids === 10 && !user.achievedAsteroidScholar) {
+      achievement = 'Asteroids10Complete';
+      user.achievedAsteroidScholar = true;
+    }
+    await user.save();
+
+    res.json(achievement);
+  } catch (error) {
+    console.error('Error updating apods:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
