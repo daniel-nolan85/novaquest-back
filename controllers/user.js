@@ -662,3 +662,29 @@ exports.updateAsteroids = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+exports.updateFacts = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $inc: { numOfFacts: 1 },
+      },
+      { new: true }
+    ).select('numOfFacts achievedCelestialSavant');
+
+    let achievement = '';
+
+    if (user.numOfFacts === 100 && !user.achievedCelestialSavant) {
+      achievement = 'Facts100Complete';
+      user.achievedCelestialSavant = true;
+    }
+    await user.save();
+
+    res.json(achievement);
+  } catch (error) {
+    console.error('Error updating apods:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
