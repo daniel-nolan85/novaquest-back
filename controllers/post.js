@@ -303,7 +303,7 @@ exports.likePost = async (req, res) => {
     const updateFields = {};
     let achievement = '';
 
-    if (numOfStars === 3 && !user.achievedStellarSupporter) {
+    if (numOfStars === 300 && !user.achievedStellarSupporter) {
       updateFields.achievedStellarSupporter = true;
       achievement = 'ThreeHundredStars';
     }
@@ -363,7 +363,7 @@ exports.addComment = async (req, res) => {
     const updateFields = {};
     let achievement = '';
 
-    if (numOfComments === 3 && !user.achievedCosmicConversationalist) {
+    if (numOfComments === 300 && !user.achievedCosmicConversationalist) {
       updateFields.achievedCosmicConversationalist = true;
       achievement = 'ThreeHundredComments';
     }

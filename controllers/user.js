@@ -25,6 +25,7 @@ exports.updateUserName = async (req, res) => {
 
 exports.awardXP = async (req, res) => {
   const { _id, xp } = req.body;
+  console.log('awardXP => ', _id, xp);
   try {
     const user = await User.findOneAndUpdate(
       { _id },
@@ -486,7 +487,7 @@ exports.catchScore = async (req, res) => {
 
     const achievements = [];
 
-    if (normalizedScore > 499 && !user.achievedGalacticAviator) {
+    if (normalizedScore > 10 && !user.achievedGalacticAviator) {
       if (!user.achievedCelestialCadet) {
         achievements.push('AstroScoreOver50');
         user.achievedCelestialCadet = true;
