@@ -36,6 +36,21 @@ exports.createOrUpdateUser = async (req, res) => {
   }
 };
 
+exports.createGuestUser = async (req, res) => {
+  const today = new Date().toDateString();
+  try {
+    const guestUser = await new User({
+      daysInSpace: 1,
+      lastLoginDate: today,
+      role: 'guest',
+    }).save();
+    res.json(guestUser);
+  } catch (error) {
+    console.error('Error in createGuestUser:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 exports.currentUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.user.email }).exec();

@@ -7,6 +7,7 @@ const { authCheck } = require('../middleware/auth');
 const {
   checkBlockedList,
   createOrUpdateUser,
+  createGuestUser,
   currentUser,
   storeNotifToken,
   deleteAccount,
@@ -15,6 +16,7 @@ const {
 
 router.get('/check-blocked-list/:email', checkBlockedList);
 router.post('/create-or-update-user', authCheck, createOrUpdateUser);
+router.post('/create-guest-user', authCheck, createGuestUser);
 router.post('/current-user', authCheck, currentUser);
 router.put('/store-notification-token', authCheck, storeNotifToken);
 router.put('/delete-account', authCheck, deleteAccount);

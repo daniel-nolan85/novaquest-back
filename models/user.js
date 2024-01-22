@@ -4,7 +4,7 @@ const { ObjectId } = mongoose.Schema;
 const userSchema = new mongoose.Schema(
   {
     name: String,
-    email: { type: String, required: true, index: true },
+    email: { type: String, index: true },
     role: { type: String, default: 'subscriber' },
     notificationToken: String,
     notifications: [

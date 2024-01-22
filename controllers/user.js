@@ -25,7 +25,6 @@ exports.updateUserName = async (req, res) => {
 
 exports.awardXP = async (req, res) => {
   const { _id, xp } = req.body;
-  console.log('awardXP => ', _id, xp);
   try {
     const user = await User.findOneAndUpdate(
       { _id },
@@ -254,7 +253,7 @@ exports.fetchThisUser = async (req, res) => {
   const { userId } = req.body;
   try {
     const user = await User.findById(userId).select(
-      'profileImage name rank bio daysInSpace'
+      'profileImage name rank bio daysInSpace role'
     );
     res.json(user);
   } catch (error) {

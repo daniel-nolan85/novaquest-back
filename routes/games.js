@@ -9,7 +9,7 @@ const {
   filterPlayersByQuery,
 } = require('../controllers/games');
 
-router.get('/fetch-leaderboard', authCheck, fetchLeaderboard);
+router.post('/fetch-leaderboard', authCheck, fetchLeaderboard);
 router.post('/filter-players-by-query', authCheck, filterPlayersByQuery);
 
 module.exports = router;
