@@ -7,6 +7,7 @@ cloudinary.config({
 });
 
 exports.uploadMediaToCloudinary = async (req, res) => {
+  console.log('uploading');
   try {
     if (req.files && Object.keys(req.files).length > 0) {
       const results = await Promise.all(

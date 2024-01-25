@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema(
     explorers: [{ type: ObjectId, ref: 'User' }],
     blockeds: [{ type: ObjectId, ref: 'User' }],
     textSpeed: { type: Number, default: 50 },
+    soundEffects: { type: Boolean, default: true },
     viewedRovers: [{ type: String }],
     viewedRoverCameras: [{ type: String }],
     viewedRoverDateTypes: [{ type: String }],

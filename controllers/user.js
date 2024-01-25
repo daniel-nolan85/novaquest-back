@@ -92,10 +92,34 @@ exports.updateTextSpeed = async (req, res) => {
       { _id },
       { $set: { textSpeed } },
       { new: true }
-    ).select(textSpeed);
+    ).select('textSpeed');
     res.json(user);
   } catch (error) {
-    console.error('Error fetching user:', error.message);
+    console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.updateSoundEffects = async (req, res) => {
+  console.log('updateSoundEffects => ', req.body);
+  let { _id, soundEffects } = req.body;
+
+  if (!_id || soundEffects === undefined) {
+    return res
+      .status(400)
+      .json({ error: 'Invalid request. Missing required parameters.' });
+  }
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { _id },
+      { $set: { soundEffects } },
+      { new: true }
+    ).select('soundEffects');
+    console.log({ user });
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

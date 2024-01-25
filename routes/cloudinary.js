@@ -12,7 +12,6 @@ const {
 
 router.post(
   '/upload-media',
-  authCheck,
   formidable({ maxFileSize: 100 * 1024 * 1024 }),
   uploadMediaToCloudinary
 );
