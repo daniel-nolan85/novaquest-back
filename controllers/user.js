@@ -524,7 +524,7 @@ exports.catchScore = async (req, res) => {
 
     const achievements = [];
 
-    if (normalizedScore > 10 && !user.achievedGalacticAviator) {
+    if (normalizedScore > 499 && !user.achievedGalacticAviator) {
       if (!user.achievedCelestialCadet) {
         achievements.push('AstroScoreOver50');
         user.achievedCelestialCadet = true;

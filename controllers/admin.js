@@ -1,6 +1,7 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const Blocked = require('../models/blocked');
+const Leaderboard = require('../models/leaderboard');
 const admin = require('../firebase');
 
 exports.fetchReportedPosts = async (req, res) => {
@@ -45,6 +46,17 @@ exports.deleteUser = async (req, res) => {
     const user = await User.findByIdAndDelete(userId).select(
       'rank name email ipAddresses'
     );
+    const posts = await Post.deleteMany({ postedBy: userId });
+    const comments = await Post.updateMany({
+      $pull: { comments: { postedBy: userId } },
+    });
+    const likes = await Post.updateMany({ $pull: { likes: userId } });
+    const allies = await User.updateMany({ $pull: { allies: userId } });
+    const explorers = await User.updateMany({ $pull: { explorers: userId } });
+    const blockeds = await User.updateMany({ $pull: { blockeds: userId } });
+    const leaderboard = await Leaderboard.deleteMany({
+      player: userId,
+    });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
