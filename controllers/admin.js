@@ -42,16 +42,23 @@ exports.fetchAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   const { userId } = req.body;
   try {
-    const user = await User.findByIdAndDelete(userId).select('rank name email');
+    const user = await User.findByIdAndDelete(userId).select(
+      'rank name email ipAddresses'
+    );
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const blocked = await new Blocked({
-      email: user.email,
-    }).save();
-    const userRecord = await admin.auth().getUserByEmail(user.email);
-    const uid = userRecord.uid;
-    await admin.auth().deleteUser(uid);
+    if (user.email) {
+      const blocked = await new Blocked({
+        ipAddresses: user.ipAddresses,
+        email: user.email,
+      }).save();
+    }
+    if (user.email) {
+      const userRecord = await admin.auth().getUserByEmail(user.email);
+      const uid = userRecord.uid;
+      await admin.auth().deleteUser(uid);
+    }
     res.json(user);
   } catch (error) {
     console.error('Error deleting user:', error.message);

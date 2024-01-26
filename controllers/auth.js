@@ -4,29 +4,38 @@ const admin = require('../firebase');
 const nodemailer = require('nodemailer');
 
 exports.checkBlockedList = async (req, res) => {
-  const { email } = req.params;
-  const user = await Blocked.find({ email }).select('_id');
+  const { ip, email } = req.body;
+  const user = await Blocked.find({
+    $or: [{ ipAddresses: ip }, { email }],
+  }).select('_id');
   res.json(user);
 };
 
 exports.createOrUpdateUser = async (req, res) => {
   try {
+    const { ip } = req.body;
+    console.log({ ip });
     const { email } = req.user;
     const user = await User.findOne({ email });
     const today = new Date().toDateString();
 
     if (user) {
-      if (user.lastLoginDate !== today) {
-        user.daysInSpace += 1;
-        user.lastLoginDate = today;
-        await user.save();
-      }
-      res.json(user);
+      const updatedUser = await User.findOneAndUpdate(
+        { email },
+        {
+          $addToSet: { ipAddresses: ip },
+          $set: { lastLoginDate: today },
+          $inc: { daysInSpace: user.lastLoginDate !== today ? 1 : 0 },
+        },
+        { new: true }
+      ).select('-notifications');
+      res.json(updatedUser);
     } else {
       const newUser = await new User({
         email,
         daysInSpace: 1,
         lastLoginDate: today,
+        ipAddresses: [ip],
       }).save();
       res.json(newUser);
     }

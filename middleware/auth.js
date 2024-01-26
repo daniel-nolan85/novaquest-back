@@ -2,7 +2,6 @@ const admin = require('../firebase');
 
 exports.authCheck = async (req, res, next) => {
   const { role } = req.body;
-  console.log('checking, => ', req.files);
   try {
     if (role === 'guest') {
       next();

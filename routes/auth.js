@@ -14,7 +14,7 @@ const {
   sendEmail,
 } = require('../controllers/auth');
 
-router.get('/check-blocked-list/:email', checkBlockedList);
+router.post('/check-blocked-list', checkBlockedList);
 router.post('/create-or-update-user', authCheck, createOrUpdateUser);
 router.post('/create-guest-user', authCheck, createGuestUser);
 router.post('/current-user', authCheck, currentUser);
