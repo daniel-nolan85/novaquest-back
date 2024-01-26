@@ -101,7 +101,6 @@ exports.updateTextSpeed = async (req, res) => {
 };
 
 exports.updateSoundEffects = async (req, res) => {
-  console.log('updateSoundEffects => ', req.body);
   let { _id, soundEffects } = req.body;
 
   if (!_id || soundEffects === undefined) {
@@ -120,6 +119,21 @@ exports.updateSoundEffects = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.confirmUserEmail = async (req, res) => {
+  const { _id, email } = req.body;
+  try {
+    const user = await User.findOne({ _id, email });
+    if (user) {
+      return res.json({ success: true });
+    } else {
+      return res.json({ success: false, error: 'Email verification failed' });
+    }
+  } catch (error) {
+    console.error('Error confirming email:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

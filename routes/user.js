@@ -11,6 +11,7 @@ const {
   promoteUser,
   updateTextSpeed,
   updateSoundEffects,
+  confirmUserEmail,
   updateViewedRovers,
   checkTriviaAchievements,
   fetchThisUser,
@@ -39,6 +40,7 @@ router.put('/badge-unlocked', authCheck, badgeUnlocked);
 router.put('/promote-user', authCheck, promoteUser);
 router.put('/update-text-speed', authCheck, updateTextSpeed);
 router.put('/update-sound-effects', authCheck, updateSoundEffects);
+router.put('/confirm-user-email', authCheck, confirmUserEmail);
 router.put('/update-viewed-rovers', authCheck, updateViewedRovers);
 router.put('/check-trivia-achievements', authCheck, checkTriviaAchievements);
 router.post('/fetch-this-user', authCheck, fetchThisUser);
