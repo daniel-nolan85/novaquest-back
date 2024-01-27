@@ -32,6 +32,7 @@ const {
   updateApods,
   updateAsteroids,
   updateFacts,
+  fetchUserExplorers,
 } = require('../controllers/user');
 
 router.put('/update-user-name', authCheck, updateUserName);
@@ -65,5 +66,6 @@ router.put('/update-planets-viewed', authCheck, updateViewedPlanets);
 router.put('/update-apods', authCheck, updateApods);
 router.put('/update-asteroids', authCheck, updateAsteroids);
 router.put('/update-facts', authCheck, updateFacts);
+router.post('/fetch-user-explorers', authCheck, fetchUserExplorers);
 
 module.exports = router;

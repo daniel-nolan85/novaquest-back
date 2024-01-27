@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
     socket.in(ownerId).emit('comment added', _id);
   });
 
+  socket.on('new post', ({ _id, explorer }) => {
+    socket.in(explorer).emit('post created', _id);
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });

@@ -12,7 +12,7 @@ cloudinary.config({
 });
 
 exports.submitPostWithMedia = async (req, res) => {
-  const { _id, text, media } = req.body;
+  const { _id, text, media, explorers } = req.body;
   try {
     if (!text.length) {
       res.json({
@@ -24,11 +24,9 @@ exports.submitPostWithMedia = async (req, res) => {
       const user = await User.findById(_id).select(
         'numOfPosts achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler'
       );
-
       const numOfPosts = user.numOfPosts + 1;
       const updateFields = {};
       let achievement = '';
-
       if (numOfPosts === 1 && !user.achievedCelestialContributor) {
         updateFields.achievedCelestialContributor = true;
         achievement = 'FirstPost';
@@ -42,15 +40,36 @@ exports.submitPostWithMedia = async (req, res) => {
         updateFields.achievedCosmicChronicler = true;
         achievement = 'TwoHundredFiftiethPost';
       }
-
       user.set({
         numOfPosts: user.numOfPosts + 1,
         ...updateFields,
       });
-
       await user.save();
-
       res.json(achievement);
+
+      const { rank, name } = user;
+      for (const explorer of explorers) {
+        const { notificationToken } = await User.findById(explorer).select(
+          'notificationToken'
+        );
+        if (Expo.isExpoPushToken(notificationToken)) {
+          const notification = {
+            to: notificationToken,
+            sound: 'default',
+            title: 'New Post!',
+            body: `${rank} ${name} created a new post.`,
+            icon: 'https://res.cloudinary.com/dntxhyxtx/image/upload/v1706308808/novaquest_m0vc8g.png',
+          };
+          try {
+            await expo.sendPushNotificationsAsync([notification]);
+          } catch (notificationError) {
+            console.error(
+              'Error sending notification:',
+              notificationError.message
+            );
+          }
+        }
+      }
     }
   } catch (err) {
     console.error('Error submitting post:', err.message);
@@ -59,7 +78,7 @@ exports.submitPostWithMedia = async (req, res) => {
 };
 
 exports.submitPost = async (req, res) => {
-  const { _id, text } = req.body;
+  const { _id, text, explorers } = req.body;
   try {
     if (!text.length) {
       res.json({
@@ -68,15 +87,12 @@ exports.submitPost = async (req, res) => {
     } else {
       const post = new Post({ text, postedBy: _id });
       post.save();
-
       const user = await User.findById(_id).select(
-        'numOfPosts achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler'
+        'numOfPosts achievedCelestialContributor achievedProlificExplorer achievedGalaxyLuminary achievedCosmicChronicler rank name'
       );
-
       const numOfPosts = user.numOfPosts + 1;
       const updateFields = {};
       let achievement = '';
-
       if (numOfPosts === 1 && !user.achievedCelestialContributor) {
         updateFields.achievedCelestialContributor = true;
         achievement = 'FirstPost';
@@ -90,15 +106,36 @@ exports.submitPost = async (req, res) => {
         updateFields.achievedCosmicChronicler = true;
         achievement = 'TwoHundredFiftiethPost';
       }
-
       user.set({
         numOfPosts: user.numOfPosts + 1,
         ...updateFields,
       });
-
       await user.save();
-
       res.json(achievement);
+
+      const { rank, name } = user;
+      for (const explorer of explorers) {
+        const { notificationToken } = await User.findById(explorer).select(
+          'notificationToken'
+        );
+        if (Expo.isExpoPushToken(notificationToken)) {
+          const notification = {
+            to: notificationToken,
+            sound: 'default',
+            title: 'New Post!',
+            body: `${rank} ${name} created a new post.`,
+            icon: 'https://res.cloudinary.com/dntxhyxtx/image/upload/v1706308808/novaquest_m0vc8g.png',
+          };
+          try {
+            await expo.sendPushNotificationsAsync([notification]);
+          } catch (notificationError) {
+            console.error(
+              'Error sending notification:',
+              notificationError.message
+            );
+          }
+        }
+      }
     }
   } catch (err) {
     console.error('Error submitting post:', err.message);
@@ -270,7 +307,7 @@ exports.likePost = async (req, res) => {
         sound: 'default',
         title: 'New Like!',
         body: `${rank} ${name} liked your post.`,
-        icon: 'https://res.cloudinary.com/daufzqlld/image/upload/v1704319447/icon_kv0qsw.png',
+        icon: 'https://res.cloudinary.com/dntxhyxtx/image/upload/v1706308808/novaquest_m0vc8g.png',
       };
 
       try {
@@ -387,7 +424,7 @@ exports.addComment = async (req, res) => {
         sound: 'default',
         title: 'New Comment!',
         body: `${rank} ${name} commented on your post.`,
-        icon: 'https://res.cloudinary.com/daufzqlld/image/upload/v1704319447/icon_kv0qsw.png',
+        icon: 'https://res.cloudinary.com/dntxhyxtx/image/upload/v1706308808/novaquest_m0vc8g.png',
       };
 
       try {

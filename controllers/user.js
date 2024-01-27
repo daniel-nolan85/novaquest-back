@@ -696,7 +696,7 @@ exports.updateAsteroids = async (req, res) => {
 
     res.json(achievement);
   } catch (error) {
-    console.error('Error updating apods:', error.message);
+    console.error('Error updating asteroids:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
@@ -722,7 +722,19 @@ exports.updateFacts = async (req, res) => {
 
     res.json(achievement);
   } catch (error) {
-    console.error('Error updating apods:', error.message);
+    console.error('Error updating facts:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+exports.fetchUserExplorers = async (req, res) => {
+  const { _id } = req.body;
+  try {
+    const explorers = await User.findById(_id).select('explorers');
+    console.log({ explorers });
+    res.json(explorers);
+  } catch (error) {
+    console.error('Error fetching explorers:', error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
