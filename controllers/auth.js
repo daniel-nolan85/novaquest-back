@@ -16,7 +16,6 @@ exports.checkBlockedList = async (req, res) => {
 exports.createOrUpdateUser = async (req, res) => {
   try {
     const { ip } = req.body;
-    console.log({ ip });
     const { email } = req.user;
     const user = await User.findOne({ email });
     const today = new Date().toDateString();

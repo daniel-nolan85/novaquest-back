@@ -53,10 +53,8 @@ exports.badgeUnlocked = async (req, res) => {
   }
 };
 
-// this function has not yet been tested!!
 exports.promoteUser = async (req, res) => {
   const { _id, rank } = req.body;
-  console.log('promoteUser => ', _id, rank);
   try {
     const user = await User.findOneAndUpdate(
       { _id },
@@ -115,7 +113,6 @@ exports.updateSoundEffects = async (req, res) => {
       { $set: { soundEffects } },
       { new: true }
     ).select('soundEffects');
-    console.log({ user });
     res.json(user);
   } catch (error) {
     console.error('Error updating user:', error.message);
@@ -731,7 +728,6 @@ exports.fetchUserExplorers = async (req, res) => {
   const { _id } = req.body;
   try {
     const explorers = await User.findById(_id).select('explorers');
-    console.log({ explorers });
     res.json(explorers);
   } catch (error) {
     console.error('Error fetching explorers:', error.message);

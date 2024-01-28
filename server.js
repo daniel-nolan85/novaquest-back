@@ -15,7 +15,7 @@ mongoose
   .catch((err) => console.error(`DB Connection Error ${err}`));
 
 app.use(morgan('dev'));
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(cors());
 
 readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
