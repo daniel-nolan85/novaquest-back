@@ -31,6 +31,8 @@ exports.createOrUpdateUser = async (req, res) => {
         { new: true }
       ).select('-notifications');
       res.json(updatedUser);
+
+      console.log({ updatedUser });
     } else {
       const newUser = await new User({
         email,
