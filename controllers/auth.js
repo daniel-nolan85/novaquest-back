@@ -6,6 +6,7 @@ const admin = require('../firebase');
 const nodemailer = require('nodemailer');
 
 exports.checkBlockedList = async (req, res) => {
+  console.log('checkBlockedList', req.body);
   const { ip, email } = req.body;
   const user = await Blocked.find({
     $or: [{ ipAddresses: ip }, { email }],
@@ -31,8 +32,6 @@ exports.createOrUpdateUser = async (req, res) => {
         { new: true }
       ).select('-notifications');
       res.json(updatedUser);
-
-      console.log({ updatedUser });
     } else {
       const newUser = await new User({
         email,
