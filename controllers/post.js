@@ -225,9 +225,9 @@ exports.newsFeed = async (req, res) => {
     const posts = await Post.find({
       postedBy: { $nin: blockedUserIds },
     })
-      .populate('postedBy', '_id name rank profileImage')
-      .populate('comments.postedBy', '_id name rank profileImage')
-      .populate('likes', '_id name rank profileImage')
+      .populate('postedBy', '_id name rank profileImage role')
+      .populate('comments.postedBy', '_id name rank profileImage role')
+      .populate('likes', '_id name rank profileImage role')
       .sort({ createdAt: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
@@ -242,9 +242,9 @@ exports.fetchSinglePost = async (req, res) => {
   const { postId } = req.body;
   try {
     const post = await Post.findById(postId)
-      .populate('postedBy', '_id name rank profileImage')
-      .populate('comments.postedBy', '_id name rank profileImage')
-      .populate('likes', '_id name rank profileImage');
+      .populate('postedBy', '_id name rank profileImage role')
+      .populate('comments.postedBy', '_id name rank profileImage role')
+      .populate('likes', '_id name rank profileImage role');
     res.json(post);
   } catch (err) {
     console.error('Error retrieving post:', err.message);
@@ -256,9 +256,9 @@ exports.fetchUsersPosts = async (req, res) => {
   const { _id, page, pageSize, initialIndex } = req.body;
   try {
     const posts = await Post.find({ postedBy: _id })
-      .populate('postedBy', '_id name rank profileImage')
-      .populate('comments.postedBy', '_id name rank profileImage')
-      .populate('likes', '_id name rank profileImage')
+      .populate('postedBy', '_id name rank profileImage role')
+      .populate('comments.postedBy', '_id name rank profileImage role')
+      .populate('likes', '_id name rank profileImage role')
       .sort({ createdAt: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
@@ -273,9 +273,9 @@ exports.fetchUsersStars = async (req, res) => {
   const { _id, page, pageSize, initialIndex } = req.body;
   try {
     const posts = await Post.find({ likes: { $in: [_id] } })
-      .populate('postedBy', '_id name rank profileImage')
-      .populate('comments.postedBy', '_id name rank profileImage')
-      .populate('likes', '_id name rank profileImage')
+      .populate('postedBy', '_id name rank profileImage role')
+      .populate('comments.postedBy', '_id name rank profileImage role')
+      .populate('likes', '_id name rank profileImage role')
       .sort({ createdAt: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize);
@@ -294,8 +294,8 @@ exports.likePost = async (req, res) => {
       { $addToSet: { likes: _id } },
       { new: true }
     )
-      .populate('likes', '_id name rank profileImage')
-      .populate('comments.postedBy', '_id name rank profileImage');
+      .populate('likes', '_id name rank profileImage role')
+      .populate('comments.postedBy', '_id name rank profileImage role');
 
     const { rank, name } = await User.findById(_id).select('rank name');
     const { notificationToken } = await User.findById(post.postedBy).select(
@@ -459,7 +459,7 @@ exports.fetchComments = async (req, res) => {
   try {
     const post = await Post.findById(postId)
       .select('comments')
-      .populate('comments.postedBy', '_id name rank profileImage')
+      .populate('comments.postedBy', '_id name rank profileImage role')
       .sort({ createdAt: -1 });
     res.json(post);
   } catch (err) {
@@ -489,7 +489,7 @@ exports.filterPostsByQuery = async (req, res) => {
   const { query } = req.body;
   try {
     let posts = await Post.find()
-      .populate('postedBy', '_id name rank profileImage')
+      .populate('postedBy', '_id name rank profileImage role')
       .sort({ createdAt: -1 })
       .exec();
     posts = posts.filter((post) => {
